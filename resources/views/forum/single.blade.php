@@ -9,6 +9,7 @@
         {{$forum->turinys}}
     </div>
     <br>
+    @if(auth()->user()->id == $forum->Kurejo_id)
     <div class="actions">
 
         <a href="{{route('forum.edit',$forum->id)}}" class="btn btn-info btn-xs">Edit</a>
@@ -21,6 +22,7 @@
         </form>
 
     </div>
+    @endif
 
     
 

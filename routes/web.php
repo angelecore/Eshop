@@ -29,6 +29,10 @@ Route::get('forums', function()
     return view('forums');
 });
 
+Route::resource('/forum',ForumasController::class);
 
-Route::resource('/forum','ForumasController');
-Route::get('/prices', [MainController::class, 'forum']);
+//Route::get('/forum', [ForumasController::class, 'index']);
+Route::get('/forum/create', [ForumasController::class, 'create']);
+Auth::routes();
+
+Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');

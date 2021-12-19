@@ -25,7 +25,8 @@ class ForumasController extends Controller
      */
     public function create()
     {
-        //
+        
+        return view('forum.create');
     }
 
     /**
@@ -36,7 +37,29 @@ class ForumasController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        //validate
+        /*$temp=$request;
+        $temp['Name_of_thread'] = $temp['Forumo_temos'];
+        $temp['Content'] = $temp['turinys'];
+        $this->validate($temp, [
+            'Name_of_thread' => 'required|min:5',
+            'Content'  => 'required|min:10',
+//            'g-recaptcha-response' => 'required|captcha'
+        ]);*/
+        $this->validate($request, [
+            'Forumo_temos' => 'required|min:5',
+            'turinys'  => 'required|min:10',
+//            'g-recaptcha-response' => 'required|captcha'
+        ]);
+
+        //store
+        //$thread = auth()->user()->threads()->create($request->all());
+
+        //$thread->tags()->attach($request->tags);
+        Forumas::create($request->all());
+
+        //redirect
+        return redirect()->route('forum.index')->withMessage('Thread Created!');
     }
 
     /**
@@ -45,9 +68,12 @@ class ForumasController extends Controller
      * @param  \App\Models\Forumas  $forumas
      * @return \Illuminate\Http\Response
      */
-    public function show(Forumas $forumas)
+    public function show(Forumas $forum)
     {
-        //
+        //var_dump($forumas);
+        //$user = Forumas::where('id',$forumas->id)->first();
+        //var_dump($forum);
+        return view('forum.single',compact('forum'));
     }
 
     /**
@@ -56,9 +82,9 @@ class ForumasController extends Controller
      * @param  \App\Models\Forumas  $forumas
      * @return \Illuminate\Http\Response
      */
-    public function edit(Forumas $forumas)
+    public function edit(Forumas $forum)
     {
-        //
+        return view('forum.edit',compact('forum'));
     }
 
     /**
@@ -68,9 +94,15 @@ class ForumasController extends Controller
      * @param  \App\Models\Forumas  $forumas
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Forumas $forumas)
+    public function update(Request $request, Forumas $forum)
     {
-        //
+        $this->validate($request, [
+            'Forumo_temos' => 'required|min:5',
+            'turinys'  => 'required|min:10',
+//            'g-recaptcha-response' => 'required|captcha'
+        ]);
+        $forum->update($request->all());
+        return redirect()->route('forum.show',$forum->id)->withMessage('Thread updated');
     }
 
     /**
@@ -79,8 +111,9 @@ class ForumasController extends Controller
      * @param  \App\Models\Forumas  $forumas
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Forumas $forumas)
+    public function destroy(Forumas $forum)
     {
-        //
+        $forum->delete();
+        return redirect()->route('forum.index')->withMessage('Thread deleted');
     }
 }

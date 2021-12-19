@@ -16,9 +16,11 @@ class CreateForumasTable extends Migration
         Schema::create('forumas', function (Blueprint $table) {
             $table->id();
             $table->string('Forumo_temos');
-            $table->string('turinys');
-            $table->json('Kurejo_id');
-            $table->double('Reitingai');
+            $table->string('turinys',1000);
+            $table->tinyInteger('Kurejo_id')->nullable();
+            $table->double('Reitingai')->nullable();
+            $table->timestamp('updated_at')->nullable();
+            $table->timestamp('created_at')->nullable();
         });
     }
 

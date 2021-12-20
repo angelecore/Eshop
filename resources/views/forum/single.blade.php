@@ -198,7 +198,7 @@
                 
             </td>
             <td valign="top">
-                <form action="{{route('comment.destroy',$comment->id)}}" onclick="return confirm('Are you sure?')" method="POST" class="inline-it">
+                <form action="{{route('comment.destroy',$reply->id)}}" onclick="return confirm('Are you sure?')" method="POST" class="inline-it">
                     {{csrf_field()}}
                     {{method_field('DELETE')}}
                     <input class="btn btn-xs btn-danger" type="submit" value="Delete">

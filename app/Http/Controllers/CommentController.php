@@ -75,7 +75,8 @@ class CommentController extends Controller
         if(auth()->user()->id != $comment->Kurejo_id/*||auth()->user() != admin level*/){
             abort(401,"You are not the creator");
          }
+         //die(var_dump($comment));
         $comment->delete();
-        return back()->withMessage('Thread deleted');
+        return back()->withMessage('Comment deleted');
     }
 }

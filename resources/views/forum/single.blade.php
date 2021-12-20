@@ -16,7 +16,7 @@
         <h1 class="list-group-item-heading">{{$forum->Forumo_temos}}</h1>
         <hr>
     <div class="thread-details">
-        <h2 class="list-group-item-heading">{!! \Michelf\Markdown::defaultTransform($forum->turinys) !!}</h2>
+        <a class="list-group-item-heading">{!! \Michelf\Markdown::defaultTransform($forum->turinys) !!}</a>
     </div>
     <br>
     @if(auth()->user() != null)
@@ -47,7 +47,7 @@
     <div class="comment">
         @foreach ($comments as $comment)
             
-            <h4>{{$comment->Komentaras}}</h4>
+            <h6>{{$comment->Komentaras}}</h6>
             <a>{{$comment->user->name}}</a>
             @if(auth()->user() != null)
             @if(auth()->user()->id == $comment->Kurejo_id)

@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\MainController;
 use App\Http\Controllers\ForumasController;
+use App\Http\Controllers\CommentController;
 
 /*
 |--------------------------------------------------------------------------
@@ -36,3 +37,5 @@ Route::get('/forum/create', [ForumasController::class, 'create']);
 Auth::routes();
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+Route::resource('comment',CommentController::class,['only'=>['update','destroy']]);
+Route::post('comment/create/{forum}',[CommentController::class,'addThreadComment'])->name('threadcomment.store');

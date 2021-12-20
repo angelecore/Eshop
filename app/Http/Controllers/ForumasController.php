@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Forumas;
 use Illuminate\Http\Request;
-use App\Models;
+use App\Models\Comment;
 
 class ForumasController extends Controller
 {
@@ -80,7 +80,9 @@ class ForumasController extends Controller
         //var_dump($forumas);
         //$user = Forumas::where('id',$forumas->id)->first();
         //var_dump($forum);
-        return view('forum.single',compact('forum'));
+        $comments = Comment::paginate(100)->where('Forumo_temos_id',$forum->id);
+        //var_dump($comments);
+        return view('forum.single',compact('forum','comments'));
     }
 
     /**
@@ -106,7 +108,7 @@ class ForumasController extends Controller
         if(auth()->user()->id != $forum->Kurejo_id/*||auth()->user() != admin level*/){
             abort(401,"You are not the creator");
          }
-         
+
         $this->validate($request, [
             'Forumo_temos' => 'required|min:5',
             'turinys'  => 'required|min:10',

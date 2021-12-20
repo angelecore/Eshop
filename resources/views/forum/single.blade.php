@@ -126,9 +126,11 @@
             @endif
         </footer>
 
-<div class="reply" style="margin-left: 40px">
+
          {{-- replyform --}}
+         <div class="reply" style="margin-left: 40px">
          @if(auth()->user() != null)
+         
          {{-- <button class="btn btn-xs btn-default" style="background-color: white" onclick="toggleReply('{{$comment->id}}')">Reply</button> --}}
          <div class="reply-form" >
              <form action={{route('replycomment.store',$comment->id)}} method="post" role="form">
@@ -225,6 +227,8 @@
         </form>
     </div>
     @endif
+    <br>
+    <br>
 
 
 @endsection

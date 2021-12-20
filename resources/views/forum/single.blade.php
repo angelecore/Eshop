@@ -6,10 +6,15 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <title>Webdev forum</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="https://bootswatch.com/5/lumen/bootstrap.min.css">
     <link rel="stylesheet" href="{{asset('css/main.css')}}">
     <link rel="stylesheet" href="{{asset('css/app.css')}}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.4/css/selectize.min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+    </style>
+    
 
 @section('content')
     <div class="content-wrap well">
@@ -43,19 +48,26 @@
     @endif
 
     {{--comment--}}
-    <footer>
+    
     <div class="comment">
-        @foreach ($comments as $comment)
-            
+        @foreach ($forum ->comments as $comment)
+        <footer>
             <h6>{{$comment->Komentaras}}</h6>
-            <a>{{$comment->user->name}}</a>
+            <a> by {{$comment->user->name}}</a>
+
+
             @if(auth()->user() != null)
             @if(auth()->user()->id == $comment->Kurejo_id)
             <div class="actions">
 
                 {{-- <a href="{{route('forum.edit',$forum->id)}}" class="btn btn-info btn-xs">Edit</a> --}}
+                
                 <table>
                     <tr>
+                        <td valign="top">
+                            <button onclick="likeIt('{{$comment->id}}',this)"><span class="fa fa-thumbs-up" style="font-size:30px"></span></button>
+                            
+                        </td>
                         <td valign="top">
     <a class="btn btn-primary btn-xs" data-toggle="modal" href="#{{$comment->id}}">Edit</a>
     <div class="modal fade" id="{{$comment->id}}">
@@ -103,7 +115,99 @@
             </div>
             @endif
             @endif
-        @endforeach
+        </footer>
+
+        {{-- reply to comment --}}
+        @foreach ($comment ->comments as $reply)
+        <div class="small well text-info">
+            <p>{{$reply-> Komentaras}}</p>
+            <a> by {{$reply->user->name}}</a>
+            @if(auth()->user() != null)
+            @if(auth()->user()->id == $reply->Kurejo_id)
+            <div class="actions">
+
+                {{-- <a href="{{route('forum.edit',$forum->id)}}" class="btn btn-info btn-xs">Edit</a> --}}
+                
+                <table>
+                    <tr>
+                        <td valign="top">
+                            <button onclick="likeIt('{{$reply->id}}',this)"><span class="fa fa-thumbs-up" style="font-size:30px"></span></button>
+                            
+                        </td>
+                        <td valign="top">
+    <a class="btn btn-primary btn-xs" data-toggle="modal" href="#{{$reply->id}}">Edit</a>
+    <div class="modal fade" id="{{$reply->id}}">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;
+                    </button>
+                    <h4 class="modal-title">{{$forum->Forumo_temos}}</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="comment-form">
+
+                        <form action="{{route('comment.update',$reply->id)}}" method="post" role="form">
+                            {{csrf_field()}}
+                            {{method_field('put')}}
+                            <legend>Edit comment</legend>
+
+                            <div class="form-group">
+                                <input type="text" class="form-control" name="Komentaras" id=""
+                                       placeholder="Input..." value="{{$reply->Komentaras}}">
+                            </div>
+
+
+                            <button type="submit" class="btn btn-primary">Reply</button>
+                        </form>
+
+                    </div>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+                {{--//delete form--}}
+                
+            </td>
+            <td valign="top">
+                <form action="{{route('comment.destroy',$comment->id)}}" onclick="return confirm('Are you sure?')" method="POST" class="inline-it">
+                    {{csrf_field()}}
+                    {{method_field('DELETE')}}
+                    <input class="btn btn-xs btn-danger" type="submit" value="Delete">
+                </form>
+            </td>
+        </tr>
+    </table>
+            </div>
+            {{-- replyform --}}
+            <div class="reply-form">
+                <form action={{route('replycomment.store',$comment->id)}} method="post" role="form">
+                    {{csrf_field()}}
+                    <legend>Create Reply</legend>
+        
+                    <div class="form-group">
+                        <input type="text" class="form-control" name="Komentaras" id="" placeholder="Reply...">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Reply</button>
+                </form>
+            </div>
+            @endif
+            @endif
+        </div>
+        @endforeach 
+                    {{-- replyform --}}
+                    <div class="reply-form">
+                        <form action={{route('replycomment.store',$comment->id)}} method="post" role="form">
+                            {{csrf_field()}}
+                            <legend>Create Reply</legend>
+                
+                            <div class="form-group">
+                                <input type="text" class="form-control" name="Komentaras" id="" placeholder="Reply...">
+                            </div>
+                            <button type="submit" class="btn btn-primary">Reply</button>
+                        </form>
+                    </div>
+        @endforeach 
     </div>
     @if(auth()->user() != null)
     <div class="comment-form">
@@ -118,6 +222,27 @@
         </form>
     </div>
     @endif
-</footer>
+
 
 @endsection
+    
+<script type="text/javascript">
+        
+        function likeIt(commentId,elem){
+            
+            var csrfToken='{{csrf_token()}}';
+            var likesCount=parseInt($('#'+commentId+"-count").text());
+            $.post('{{route('toggleLike')}}', {commentId: commentId,_token:csrfToken}, function (data) {
+                console.log(data);
+               if(data.message==='liked'){
+                   $(elem).addClass('liked');
+                   $('#'+commentId+"-count").text(likesCount+1);
+//                   $(elem).css({color:'red'});
+               }else{
+//                   $(elem).css({color:'black'});
+                   $('#'+commentId+"-count").text(likesCount-1);
+                   $(elem).removeClass('liked');
+               }
+            });
+        }
+</script>

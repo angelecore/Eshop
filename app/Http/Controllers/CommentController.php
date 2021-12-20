@@ -25,6 +25,23 @@ class CommentController extends Controller
         return back()->withMessage('Comment created');
     }
 
+    public function addReplyComment(Request $request, Comment $comment)
+    {
+        $this->validate($request,[
+            'Komentaras'=>'required'
+        ]);
+        $reply=new Comment();
+        $reply->Komentaras=$request->Komentaras;
+        $reply->Kurejo_id=auth()->user()->id;
+        // $request->Kurejo_id = auth()->user()->id;
+        // Comment::create($request->all());
+        //$comment->type ="";
+
+
+        $comment->comments()->save($reply);
+        return back()->withMessage('Reply created');
+    }
+
     
     /**
      * Update the specified resource in storage.

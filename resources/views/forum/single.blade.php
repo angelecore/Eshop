@@ -13,6 +13,15 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.4/css/selectize.min.css">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <style>
+        .reply{
+            font-size: 15px;
+            padding: 5px;
+            right: 10px;
+            background-color: #DDD9D9;
+        }
+        .pad{
+            padding-left: 20px;
+        }
     </style>
     
 
@@ -64,10 +73,10 @@
                 
                 <table>
                     <tr>
-                        <td valign="top">
+                        {{-- <td valign="top">
                             <button onclick="likeIt('{{$comment->id}}',this)"><span class="fa fa-thumbs-up" style="font-size:30px"></span></button>
                             
-                        </td>
+                        </td> --}}
                         <td valign="top">
     <a class="btn btn-primary btn-xs" data-toggle="modal" href="#{{$comment->id}}">Edit</a>
     <div class="modal fade" id="{{$comment->id}}">
@@ -117,11 +126,28 @@
             @endif
         </footer>
 
+<div class="reply" style="margin-left: 40px">
+         {{-- replyform --}}
+         @if(auth()->user() != null)
+         {{-- <button class="btn btn-xs btn-default" style="background-color: white" onclick="toggleReply('{{$comment->id}}')">Reply</button> --}}
+         <div class="reply-form" >
+             <form action={{route('replycomment.store',$comment->id)}} method="post" role="form">
+                 {{csrf_field()}}
+                 <legend>Create Reply</legend>
+     
+                 <div class="form-group">
+                     <input type="text" class="form-control" name="Komentaras" id="" placeholder="Reply...">
+                 </div>
+                 <button type="submit" class="btn btn-primary">Reply</button>
+             </form>
+         </div>
+         <br>
+         @endif
         {{-- reply to comment --}}
         @foreach ($comment ->comments as $reply)
-        <div class="small well text-info">
-            <p>{{$reply-> Komentaras}}</p>
-            <a> by {{$reply->user->name}}</a>
+        
+            <p class="pad">{{$reply-> Komentaras}}</p>
+            <a class="pad"> by {{$reply->user->name}}</a>
             @if(auth()->user() != null)
             @if(auth()->user()->id == $reply->Kurejo_id)
             <div class="actions">
@@ -130,10 +156,10 @@
                 
                 <table>
                     <tr>
-                        <td valign="top">
+                        {{-- <td valign="top">
                             <button onclick="likeIt('{{$reply->id}}',this)"><span class="fa fa-thumbs-up" style="font-size:30px"></span></button>
                             
-                        </td>
+                        </td> --}}
                         <td valign="top">
     <a class="btn btn-primary btn-xs" data-toggle="modal" href="#{{$reply->id}}">Edit</a>
     <div class="modal fade" id="{{$reply->id}}">
@@ -179,34 +205,11 @@
         </tr>
     </table>
             </div>
-            {{-- replyform --}}
-            <div class="reply-form">
-                <form action={{route('replycomment.store',$comment->id)}} method="post" role="form">
-                    {{csrf_field()}}
-                    <legend>Create Reply</legend>
+            @endif
+            @endif
         
-                    <div class="form-group">
-                        <input type="text" class="form-control" name="Komentaras" id="" placeholder="Reply...">
-                    </div>
-                    <button type="submit" class="btn btn-primary">Reply</button>
-                </form>
-            </div>
-            @endif
-            @endif
-        </div>
         @endforeach 
-                    {{-- replyform --}}
-                    <div class="reply-form">
-                        <form action={{route('replycomment.store',$comment->id)}} method="post" role="form">
-                            {{csrf_field()}}
-                            <legend>Create Reply</legend>
-                
-                            <div class="form-group">
-                                <input type="text" class="form-control" name="Komentaras" id="" placeholder="Reply...">
-                            </div>
-                            <button type="submit" class="btn btn-primary">Reply</button>
-                        </form>
-                    </div>
+    </div>         
         @endforeach 
     </div>
     @if(auth()->user() != null)
@@ -227,6 +230,10 @@
 @endsection
     
 <script type="text/javascript">
+
+        function toggleReply(commentId){
+            $('.reply-form-'+commentId).toggleClass('hidden');
+        }
         
         function likeIt(commentId,elem){
             
